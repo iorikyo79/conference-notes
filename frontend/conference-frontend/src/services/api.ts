@@ -253,6 +253,16 @@ class APIClient {
     );
   }
 
+  async updateCaption(attachmentId: string, caption: string): Promise<Attachment> {
+    return this.request<Attachment>(
+      `/api/attachments/${attachmentId}/caption`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ caption }),
+      }
+    );
+  }
+
   async generateCaption(attachmentId: string): Promise<{ message: string }> {
     return this.request<{ message: string }>(`/api/attachments/${attachmentId}/caption`, {
       method: 'POST',
@@ -293,6 +303,10 @@ class APIClient {
 
   async getReport(conferenceId: string): Promise<ReportResponse> {
     return this.request<ReportResponse>(`/api/reports/${conferenceId}`);
+  }
+
+  getAttachmentFileUrl(attachmentId: string): string {
+    return `${this.baseURL}/api/attachments/${attachmentId}/file`;
   }
 
   async exportReportHtml(conferenceId: string): Promise<Blob> {

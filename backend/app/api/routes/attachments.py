@@ -389,6 +389,24 @@ async def get_caption_status(conference_id: str = Query(..., description="학회
     }
 
 
+@router.patch("/{attachment_id}/caption")
+async def update_caption(
+    attachment_id: str,
+    caption: str = Body(..., embed=True),
+):
+    """캡션 수동 수정"""
+    att = storage.get_attachment(attachment_id)
+    if not att:
+        raise HTTPException(status_code=404, detail=f"Attachment '{attachment_id}' not found")
+
+    updated = storage.update_attachment(attachment_id, {
+        "ai_caption": caption,
+        "caption_status": "completed",
+    })
+    logger.info(f"Caption updated manually for {attachment_id}")
+    return updated
+
+
 @router.patch("/{attachment_id}/session")
 async def reassign_session(
     attachment_id: str,
@@ -417,6 +435,21 @@ async def get_attachment(attachment_id: str):
     if not att:
         raise HTTPException(status_code=404, detail=f"Attachment '{attachment_id}' not found")
     return att
+
+
+@router.get("/{attachment_id}/file")
+async def serve_attachment_file(attachment_id: str):
+    """첨부파일 원본 서빙 (이미지 미리보기용)"""
+    att = storage.get_attachment(attachment_id)
+    if not att:
+        raise HTTPException(status_code=404, detail=f"Attachment '{attachment_id}' not found")
+
+    file_path = att.get("file_path", "")
+    if not file_path or not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found on disk")
+
+    from fastapi.responses import FileResponse
+    return FileResponse(file_path)
 
 
 @router.get("/{attachment_id}/text")

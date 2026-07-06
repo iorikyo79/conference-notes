@@ -993,6 +993,134 @@ body {
   font-style: italic;
 }
 
+/* === Caption Edit Button === */
+.btn-edit-caption {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+
+.attachment-card:hover .btn-edit-caption {
+  opacity: 1;
+}
+
+.btn-edit-caption:hover {
+  background: #e8e8f0;
+}
+
+.btn-delete-attachment {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s;
+}
+
+.attachment-card:hover .btn-delete-attachment {
+  opacity: 1;
+}
+
+.btn-delete-attachment:hover {
+  background: #ffebee;
+}
+
+/* === Caption Editor Modal === */
+.caption-editor-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.caption-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.caption-editor-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.caption-editor-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.caption-editor-image {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eee;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+}
+
+.caption-editor-image img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+}
+
+.caption-editor-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+  flex-wrap: wrap;
+}
+
+.caption-editor-filename {
+  font-weight: 500;
+  color: #555;
+}
+
+.caption-editor-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.caption-editor-textarea:focus {
+  outline: none;
+  border-color: #4a4af0;
+  box-shadow: 0 0 0 3px rgba(74,74,240,0.1);
+}
+
+.caption-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #eee;
+}
+
 /* === Attachment Card Info (filename + caption) === */
 .att-card-info {
   flex: 1;

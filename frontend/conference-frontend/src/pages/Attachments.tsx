@@ -28,7 +28,12 @@ export const Attachments: React.FC = () => {
   const [draggedAttId, setDraggedAttId] = useState<string | null>(null);
   const [dragOverSession, setDragOverSession] = useState<string | null>(null);
   const [captionStatus, setCaptionStatus] = useState<CaptionStatus | null>(null);
-  const [captionGenerating, setCaptionGenerating] = useState<string | null>(null); // sessionId being generated
+  const [captionGenerating, setCaptionGenerating] = useState<string | null>(null);
+  const [editingCaption, setEditingCaption] = useState<Attachment | null>(null);
+  const [captionDraft, setCaptionDraft] = useState('');
+  const [savingCaption, setSavingCaption] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Attachment | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -183,6 +188,39 @@ export const Attachments: React.FC = () => {
       await loadAttachments();
     } catch {
       // error
+    }
+  };
+
+  const openCaptionEditor = (att: Attachment) => {
+    setEditingCaption(att);
+    setCaptionDraft(att.ai_caption || '');
+  };
+
+  const handleSaveCaption = async () => {
+    if (!editingCaption) return;
+    setSavingCaption(true);
+    try {
+      await apiClient.updateCaption(editingCaption.id, captionDraft);
+      setEditingCaption(null);
+      await loadAttachments();
+    } catch {
+      // error
+    } finally {
+      setSavingCaption(false);
+    }
+  };
+
+  const handleDeleteAttachment = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await apiClient.deleteAttachment(deleteTarget.id);
+      setDeleteTarget(null);
+      await loadAttachments();
+    } catch {
+      // error
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -384,6 +422,26 @@ export const Attachments: React.FC = () => {
                         <span className={`caption-badge ${captionLabel.className}`}>
                           {captionLabel.text}
                         </span>
+                        <button
+                          className="btn-edit-caption"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openCaptionEditor(att);
+                          }}
+                          title="캡션 편집"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className="btn-delete-attachment"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTarget(att);
+                          }}
+                          title="삭제"
+                        >
+                          🗑
+                        </button>
                       </div>
                     </div>
                     );
@@ -392,6 +450,105 @@ export const Attachments: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* 캡션 편집 모달 */}
+      {editingCaption && (
+        <div className="modal-overlay" onClick={() => !savingCaption && setEditingCaption(null)}>
+          <div className="caption-editor-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="caption-editor-header">
+              <h3>캡션 편집</h3>
+              <button
+                className="btn-close-results"
+                onClick={() => setEditingCaption(null)}
+                disabled={savingCaption}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="caption-editor-body">
+              {editingCaption.file_type === 'image' && (
+                <div className="caption-editor-image">
+                  <img
+                    src={apiClient.getAttachmentFileUrl(editingCaption.id)}
+                    alt={editingCaption.filename}
+                  />
+                </div>
+              )}
+              <div className="caption-editor-info">
+                <span className="caption-editor-filename">{editingCaption.filename}</span>
+                {editingCaption.exif_datetime && (
+                  <span className="caption-editor-exif">
+                    촬영: {formatExifTime(editingCaption.exif_datetime)}
+                  </span>
+                )}
+              </div>
+              <textarea
+                className="caption-editor-textarea"
+                value={captionDraft}
+                onChange={(e) => setCaptionDraft(e.target.value)}
+                placeholder="슬라이드 캡션을 입력하세요..."
+                rows={4}
+                autoFocus
+                disabled={savingCaption}
+              />
+            </div>
+            <div className="caption-editor-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setEditingCaption(null)}
+                disabled={savingCaption}
+              >
+                취소
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={handleSaveCaption}
+                disabled={savingCaption}
+              >
+                {savingCaption ? '저장 중...' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 첨부파일 삭제 확인 모달 */}
+      {deleteTarget && (
+        <div className="modal-overlay" onClick={() => !deleting && setDeleteTarget(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>첨부파일 삭제</h3>
+            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+              다음 파일을 삭제하시겠습니까?
+              <br />
+              <strong style={{ color: '#1a1a2e' }}>{deleteTarget.filename}</strong>
+              {deleteTarget.exif_datetime && (
+                <span style={{ display: 'block', marginTop: '0.25rem', fontSize: '0.8rem' }}>
+                  촬영: {formatExifTime(deleteTarget.exif_datetime)}
+                </span>
+              )}
+            </p>
+            <p style={{ fontSize: '0.8rem', color: '#e74c3c', marginBottom: '1rem' }}>
+              ⚠ 파일과 캡션이 영구적으로 삭제됩니다.
+            </p>
+            <div className="modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+              >
+                취소
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDeleteAttachment}
+                disabled={deleting}
+              >
+                {deleting ? '삭제 중...' : '삭제'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
