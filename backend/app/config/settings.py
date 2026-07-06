@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     DATA_DIR: str = "storage/data"
     UPLOAD_DIR: str = "storage/uploads"
     REPORTS_DIR: str = "storage/reports"
+    CONFERENCES_DIR: str = "storage/conferences"
 
     # File Upload
     MAX_FILE_SIZE: int = 50 * 1024 * 1024  # 50MB

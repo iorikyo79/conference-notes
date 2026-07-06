@@ -98,11 +98,11 @@ async def upload_attachment(
             detail=f"File too large. Max size: {settings.MAX_FILE_SIZE // (1024*1024)}MB"
         )
 
-    # 파일 저장
+    # 파일 저장 (학회별 디렉토리)
     attachment_id = storage.generate_id()
     file_type = _get_file_type(file.filename or "unknown")
     safe_filename = f"{attachment_id}_{file.filename}"
-    upload_dir = Path(settings.UPLOAD_DIR)
+    upload_dir = storage.get_upload_dir(conference_id) if conference_id else Path(settings.UPLOAD_DIR)
     upload_dir.mkdir(parents=True, exist_ok=True)
     file_path = upload_dir / safe_filename
 
@@ -176,7 +176,7 @@ async def upload_batch(
         raise HTTPException(status_code=404, detail=f"Conference '{conference_id}' not found")
 
     results = []
-    upload_dir = Path(settings.UPLOAD_DIR)
+    upload_dir = storage.get_upload_dir(conference_id)
     upload_dir.mkdir(parents=True, exist_ok=True)
 
     for file in files:

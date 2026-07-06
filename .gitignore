@@ -19,18 +19,15 @@ build/
 logs/
 *.log
 
-# Storage (keep structure, track seed data, ignore user data)
-storage/data/notes.json
-storage/data/attachments.json
-storage/data/reports.json
-storage/uploads/*
-storage/reports/*
-!storage/data/.gitkeep
-!storage/uploads/.gitkeep
-!storage/reports/.gitkeep
-
-# Conference data (large JSON with full schedule)
-storage/data/conferences.json
+# Storage (keep structure, ignore all user data)
+backend/storage/data/*
+backend/storage/conferences/*
+backend/storage/uploads/*
+backend/storage/reports/*
+!backend/storage/data/.gitkeep
+!backend/storage/conferences/.gitkeep
+!backend/storage/uploads/.gitkeep
+!backend/storage/reports/.gitkeep
 
 # Generated reports (large HTML with embedded base64 images)
 output/
