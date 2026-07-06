@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "conference-notes"
+version = "0.1.0"
+description = "Conference notes application with real-time note-taking and post-conference report generation"
+authors = ["엄정권 <infinitt@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.104.0"
+uvicorn = {extras = ["standard"], version = "^0.24.0"}
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+python-multipart = "^0.0.6"
+
+# File processing (Phase 2)
+pymupdf = "^1.24.0"
+Pillow = "^10.0.0"
+pytesseract = "^0.3.10"
+
+# LLM (Phase 3)
+zhipuai = "^2.0.0"
+markdown = "^3.10.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = "^0.21.1"
+httpx = "^0.25.2"
+black = "^23.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']

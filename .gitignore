@@ -1,0 +1,56 @@
+# Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Storage (keep structure, track seed data, ignore user data)
+storage/data/notes.json
+storage/data/attachments.json
+storage/data/reports.json
+storage/uploads/*
+storage/reports/*
+!storage/data/.gitkeep
+!storage/uploads/.gitkeep
+!storage/reports/.gitkeep
+
+# Conference data (large JSON with full schedule)
+storage/data/conferences.json
+
+# Generated reports (large HTML with embedded base64 images)
+output/
+
+# Resource (presentation transcripts - private data)
+resource/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Poetry
+poetry.lock
+
+# pyright
+pyrightconfig.json
+
+# Node
+node_modules/
